@@ -267,4 +267,4 @@ fn main() {
 
 }
 
-//LA FASE 1 EXPLICACA EN EL FASE_1.txt
+//LA FASE 1 EXPLICADA EN EL FASE_1.txt
