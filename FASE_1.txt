@@ -1,0 +1,46 @@
+FASE 1: ANÁLISIS DE SEGURIDAD Y PROPIEDAD
+
+1. Documentación de Memoria: Explica en el código base qué ocurre con la propiedad 
+(ownership) cuando se usa Option::take() dentro de las rotaciones.
+
+R/
+Option::take() extrae el valor que se encuentra dentro del contenedor Some(...), 
+transfiriendo la propiedad (ownership) del dato hacia afuera y dejando un 'None' 
+en su lugar original de forma segura y atómica. Esto permite desconectar subárboles 
+para reestructurarlos sin violar las reglas de Rust sobre referencias y memoria.
+
+
+2. Concepto de Box: ¿Por qué usamos Box<Nodo> en lugar de Nodo directamente dentro de la estructura? Explica la relación con el tamaño en memoria en tiempo de compilación.
+
+R/
+Rust requiere conocer el tamaño exacto en memoria de cada estructura en tiempo 
+de compilación. Como el árbol es una estructura recursiva, si no se usara Box, 
+su tamaño sería infinito. Box<Nodo> guarda el nodo real en el Heap y deja en el 
+Stack un puntero inteligente de tamaño fijo (8 bytes), permitiendo la recursividad.
+
+
+3. Prueba de Escritorio: Dibuja el árbol AVL resultante tras insertar vuelos con las siguientes altitudes: [5000, 3000, 2000, 4000, 3500, 6000]. Identifica el tipo de rotación (Simple o Doble) realizada en cada paso crítico.
+
+R/
+- Inserta 5000 -> Raíz inicial.
+- Inserta 3000 -> Hijo izquierdo de 5000.
+- Inserta 2000 -> Hijo izquierdo de 3000. Desbalance en 5000 (Factor +2). 
+  Se ejecuta una ROTACIÓN SIMPLE A LA DERECHA sobre 5000. Nueva raíz temporal: 3000.
+- Inserta 4000 -> Hijo derecho de 3000.
+- Inserta 3500 -> Hijo izquierdo de 4000.
+- Inserta 6000 -> Hijo derecho de 5000. Al subir, la raíz (3000) detecta un 
+  desbalance crítico (Factor -2). Como el hijo derecho (4000) tiene carga izquierda,
+  el motor ejecuta una ROTACIÓN DOBLE (Derecha sobre 5000 e Izquierda sobre 3000).
+  Esto hace que el nodo 4000 suba de forma automática como la RAÍZ FINAL.
+
+Árbol Final Resultante en el Radar:
+             4000
+            /    \
+        3000      5000
+       /    \         \
+   2000      3500      6000
+
+Explicación del diagrama / Imagen adjunta:
+Secuencia evaluada: [5000, 3000, 2000, 4000, 3500, 6000]
+1. Inserción de 2000 -> Provoca Rotación Simple a la Derecha en nodo 5000.
+2. Inserción de 6000 -> Provoca Rotación Doble Derecha-Izquierda en la raíz (nodo 3000), elevando al nodo 4000 como la raíz definitiva del sistema.
